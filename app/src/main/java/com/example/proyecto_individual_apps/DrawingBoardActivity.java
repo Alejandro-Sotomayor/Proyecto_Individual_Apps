@@ -2,7 +2,10 @@ package com.example.proyecto_individual_apps;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,12 +15,17 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 public class DrawingBoardActivity extends AppCompatActivity implements View.OnClickListener {
 
     private DrawingView mDrawView;
     private ImageButton mIvCurrPaint;
+    private Bitmap mBitmap;
 
     private float mSmallBrush, mMediumBrush, mLargeBrush;
 
@@ -258,31 +266,33 @@ public class DrawingBoardActivity extends AppCompatActivity implements View.OnCl
         brushDialog.show();
     }
 
-    //guardar dibujo a la galeria
+    //guardar dibujo
     private void guardarDibujo() {
         AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
         saveDialog.setTitle("Guardar Dibujo");
-        saveDialog.setMessage("Guardar dibujo a la Galería?");
+        saveDialog.setMessage("Guardar dibujo en la Galería?");
         saveDialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                //save drawing
-                mDrawView.setDrawingCacheEnabled(true);
+                guardadoDibujoGaleria();
+                //guardar dibujo
+                /*mDrawView.setDrawingCacheEnabled(true);
 
                 String imgSaved = MediaStore.Images.Media.insertImage(
                         getContentResolver(), mDrawView.getDrawingCache(),
                         UUID.randomUUID().toString() + ".png", "dibujo");
+                */
 
-                if (imgSaved != null) {
+                /*if (imgSaved != null) {
                     Toast savedToast = Toast.makeText(getApplicationContext(),
-                            "Dibujo guardado a la Galería!", Toast.LENGTH_SHORT);
+                            "Dibujo guardado en la Galería!", Toast.LENGTH_SHORT);
                     savedToast.show();
                 } else {
                     Toast unsavedToast = Toast.makeText(getApplicationContext(),
                             "La imagen no se pudo guardar", Toast.LENGTH_SHORT);
                     unsavedToast.show();
-                }
+                }*/
 
-                mDrawView.destroyDrawingCache();
+               // mDrawView.destroyDrawingCache();
             }
         });
         saveDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -291,5 +301,48 @@ public class DrawingBoardActivity extends AppCompatActivity implements View.OnCl
             }
         });
         saveDialog.show();
+    }
+
+    private void guardadoDibujoGaleria(){
+        String path = Environment.getExternalStorageDirectory().toString();
+        path = path  +"/"+ getString(R.string.app_name);
+        File dir = new File(path);
+        //guardar dibujo
+        mDrawView.setDrawingCacheEnabled(true);
+
+        //intento de guardado
+        String imTitle = "Dibujo" + "_" + System.currentTimeMillis()+".png";
+        String imgSaved = MediaStore.Images.Media.insertImage(
+                getContentResolver(), mDrawView.getDrawingCache(),
+                imTitle, "a drawing");
+
+        try {
+            if (!dir.isDirectory()|| !dir.exists()) {
+                dir.mkdirs();
+            }
+            mDrawView.setDrawingCacheEnabled(true);
+            File file = new File(dir, imTitle);
+            FileOutputStream fOut = new FileOutputStream(file);
+            Bitmap bm =  mDrawView.getDrawingCache();
+            bm.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("Uh Oh!");
+            alert.setMessage("Oops! La imagen no se pudo guardar");
+            alert.setPositiveButton("OK", null);
+            alert.show();
+
+        }
+
+        if(imgSaved!=null){
+            Toast savedToast = Toast.makeText(getApplicationContext(),
+                    "Dibujo guardado en la Galería!", Toast.LENGTH_SHORT);
+            savedToast.show();
+        }
+
+        mDrawView.destroyDrawingCache();
     }
 }
