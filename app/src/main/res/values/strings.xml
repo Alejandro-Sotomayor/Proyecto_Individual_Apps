@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Proyecto_Individual_Apps</string>
+
+    <string name="start_new">Nuevo</string>
+    <string name="brush">Brocha</string>
+    <string name="erase">Borrar</string>
+    <string name="save">Guardar</string>
+    <string name="paint">Pintar</string>
+    <string name="pattern">Patron</string>
+
+    <string name="sml">Small</string>
+    <string name="med">Medium</string>
+    <string name="lrg">Large</string>
+
+</resources>
