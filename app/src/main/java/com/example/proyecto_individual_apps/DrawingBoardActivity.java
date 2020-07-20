@@ -111,31 +111,24 @@ public class DrawingBoardActivity extends AppCompatActivity implements View.OnCl
 
     }
 
-    //use chosen pattern
+    //usar patron para pintar
     public void patternClicked(View view) {
 
-        //set erase as false (if set previously as true)
+
         mDrawView.setErase(false);
 
-        //reset brush size (if some other option was selected previously)
         mDrawView.setBrushSize(mDrawView.getLastBrushSize());
 
-        //update pattern
         if (view != mIvCurrPaint) {
 
-            //get the clicked image button
             ImageButton ivPatten = (ImageButton) view;
 
-            //set pattern to brush
             mDrawView.setPattern(view.getTag().toString());
 
-            //set current button's background as pressed button
             ivPatten.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
 
-            //set previous button's background as unpressed button
             mIvCurrPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint));
 
-            //set current view as this button view
             mIvCurrPaint = (ImageButton) view;
         }
     }
