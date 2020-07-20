@@ -25,7 +25,7 @@ public class DrawingView extends View {
     private Path mDrawPath;
     private Paint mDrawPaint, mCanvasPaint;
     //color inicial
-    private int mPaintColor = 0xFF660000;
+    private int mPaintColor = 0xFF660000, mpaintAlpha = 255;
     //canvas
     private Canvas mDrawCanvas;
     //canvas bitmap
@@ -197,5 +197,15 @@ public class DrawingView extends View {
         }
 
         isFilling = false;
+    }
+
+    public int getPaintAlpha(){
+        return Math.round((float)mpaintAlpha/255*100);
+    }
+
+    public void setPaintAlpha(int newAlpha){
+        mpaintAlpha=Math.round((float)newAlpha/100*255);
+        mDrawPaint.setColor(mPaintColor);
+        mDrawPaint.setAlpha(mpaintAlpha);
     }
 }

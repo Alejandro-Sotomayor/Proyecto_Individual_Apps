@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -77,6 +80,12 @@ public class DrawingBoardActivity extends AppCompatActivity implements View.OnCl
         ImageButton btnFill = (ImageButton) findViewById(R.id.btn_fill);
         if (btnFill != null) {
             btnFill.setOnClickListener(this);
+        }
+
+        //se setea click listeners para el boton de opacidad
+        ImageButton btnOpacity = (ImageButton) findViewById(R.id.btn_opacity);
+        if (btnOpacity != null) {
+            btnOpacity.setOnClickListener(this);
         }
 
         //se setea el tamanho inicial de la brocha
@@ -158,10 +167,52 @@ public class DrawingBoardActivity extends AppCompatActivity implements View.OnCl
                 mDrawView.fillColor();
                 break;
 
+            case R.id.btn_opacity:
+                setearOpacidad();
+                break;
+
             default:
                 break;
 
         }
+    }
+
+    private void setearOpacidad(){
+        //launch opacity chooser
+        final Dialog seekDialog = new Dialog(this);
+        seekDialog.setTitle("Opacity level:");
+        seekDialog.setContentView(R.layout.opacity_chooser);
+        final TextView seekTxt = (TextView)seekDialog.findViewById(R.id.opq_txt);
+        final SeekBar seekOpq = (SeekBar)seekDialog.findViewById(R.id.opacity_seek);
+        seekOpq.setMax(100);
+
+        int currLevel = mDrawView.getPaintAlpha();
+        seekTxt.setText(currLevel+"%");
+        seekOpq.setProgress(currLevel);
+        seekOpq.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                seekTxt.setText(Integer.toString(progress)+"%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+
+        });
+
+        Button opqBtn = (Button)seekDialog.findViewById(R.id.opq_ok);
+        opqBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mDrawView.setPaintAlpha(seekOpq.getProgress());
+                seekDialog.dismiss();
+            }
+        });
+        seekDialog.show();
     }
 
     private void setearNuevoCanvas() {
