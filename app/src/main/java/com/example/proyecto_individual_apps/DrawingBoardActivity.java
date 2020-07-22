@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.UUID;
 
 public class DrawingBoardActivity extends AppCompatActivity implements View.OnClickListener {
@@ -355,7 +357,8 @@ public class DrawingBoardActivity extends AppCompatActivity implements View.OnCl
         mDrawView.setDrawingCacheEnabled(true);
 
         //intento de guardado
-        String imTitle = "Dibujo" + "_" + System.currentTimeMillis()+".png";
+        String CurrentDateAndTime = getCurrentDateAndTime();
+        String imTitle = "Dibujo" + "_" + CurrentDateAndTime +".png";
         String imgSaved = MediaStore.Images.Media.insertImage(
                 getContentResolver(), mDrawView.getDrawingCache(),
                 imTitle, "a drawing");
@@ -388,5 +391,12 @@ public class DrawingBoardActivity extends AppCompatActivity implements View.OnCl
         }
 
         mDrawView.destroyDrawingCache();
+    }
+
+    private String getCurrentDateAndTime() {
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String formattedDate = df.format(c.getTime());
+        return formattedDate;
     }
 }
